@@ -1,0 +1,23 @@
+{
+  "name": "gachi",
+  "version": "1.0.0",
+  "description": "Small framework for JS, based on gachi memes",
+  "main": "src/gachi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zewasik/Gachi.js.git"
+  },
+  "keywords": [
+    "framework",
+    "JS"
+  ],
+  "author": "Deniss, Denis, Stepan, Erik, Martin, Andrei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Zewasik/Gachi.js/issues"
+  },
+  "homepage": "https://github.com/Zewasik/Gachi.js#readme"
+}
