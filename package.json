@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Zewasik/Gachi.js/issues"
   },
-  "homepage": "https://github.com/Zewasik/Gachi.js#readme"
+  "homepage": "https://github.com/Zewasik/Gachi.js#readme",
+  "dependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.22.5"
+  }
 }
