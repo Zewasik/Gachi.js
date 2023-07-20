@@ -1,26 +1,37 @@
 {
-  "name": "gachi",
-  "version": "1.0.0",
-  "description": "Small framework for JS, based on gachi memes",
-  "main": "src/gachi.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Zewasik/Gachi.js.git"
-  },
-  "keywords": [
-    "framework",
-    "JS"
-  ],
-  "author": "Deniss, Denis, Stepan, Erik, Martin, Andrei",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Zewasik/Gachi.js/issues"
-  },
-  "homepage": "https://github.com/Zewasik/Gachi.js#readme",
-  "dependencies": {
-    "@babel/plugin-transform-react-jsx": "^7.22.5"
-  }
+	"name": "gachi",
+	"version": "1.0.0",
+	"description": "Small framework for JS, based on gachi memes",
+	"main": "src/gachi.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node /src/gachi.js",
+		"build": "babel src -d dist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Zewasik/Gachi.js.git"
+	},
+	"keywords": [
+		"framework",
+		"JS"
+	],
+	"author": "Deniss, Denis, Stepan, Erik, Martin, Andrei",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Zewasik/Gachi.js/issues"
+	},
+	"homepage": "https://github.com/Zewasik/Gachi.js#readme",
+	"type": "module",
+	"dependencies": {
+		"@babel/plugin-transform-react-jsx": "^7.22.5",
+		"express": "^4.18.2",
+		"node": "18.16"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.22.9",
+		"@babel/core": "^7.22.9",
+		"@babel/preset-env": "^7.22.9",
+		"@babel/preset-react": "^7.22.5"
+	}
 }

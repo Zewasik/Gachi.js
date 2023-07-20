@@ -7,16 +7,16 @@ Team 2 - Denis, Andrei
 
 Required:
 
-- template for project (file system) <- Team 2
-- state manager <- Team 1
-- virtual DOM <- Team 2
-- element rendering <- Team 2
-- event handling <- Team 1
+-   [x] template for project (file system) <- Team 2
+-   [ ] state manager <- Team 1
+-   [ ] virtual DOM <- Team 2
+-   [ ] element rendering <- Team 2
+-   [ ] event handling <- Team 1
 
 Optonal:
 
-- global state manager <- Team 1
-- router <- Team 2
+-   [ ] global state manager <- Team 1
+-   [ ] router <- Team 2
 
 ## File structure tree
 

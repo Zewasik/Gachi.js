@@ -1,0 +1,14 @@
+{
+	"presets": [
+		[
+			"@babel/preset-react",
+			{
+				"pragma": "Gachi.createElement", // default pragma is React.createElement (only in classic runtime)
+				"pragmaFrag": "Gachi.createTextElement", // default is React.Fragment (only in classic runtime)
+				"throwIfNamespace": true, // defaults to true
+				"runtime": "classic" // defaults to classic
+				// "importSource": "index" // defaults to react (only in automatic runtime)
+			}
+		]
+	]
+}
