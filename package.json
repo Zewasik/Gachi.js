@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/Zewasik/Gachi.js/issues"
   },
-  "homepage": "https://github.com/Zewasik/Gachi.js#readme"
+  "homepage": "https://github.com/Zewasik/Gachi.js#readme",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node": "18.16"
+  }
 }
