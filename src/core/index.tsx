@@ -89,19 +89,8 @@ function createDom(element: GachiElement) {
 	return dom
 }
 
-function test() {
-	return (
-		<div>
-			<button onClick={() => alert(1)}>Click 11</button>
-			<button onClick={() => alert(2)}>Click 12</button>
-			<button onClick={() => alert(3)}>Click 13</button>
-		</div>
-	)
-}
-
 export default {
 	createElement,
 	createTextElement,
 	render,
-	test,
 }

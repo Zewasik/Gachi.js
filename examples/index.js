@@ -10,6 +10,8 @@ const a = Gachi.createElement(
 	Gachi.createElement("h1", null, "this is jsx transpilation test")
 )
 console.log(a)
+const b = Gachi.test()
+console.log(b)
 
 // const elem = Gachi.createElement(
 // 	"div",
