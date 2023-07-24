@@ -1,54 +1,52 @@
-import Gachi from "../src/core/index.js"
-import { importCss } from "/src/modules/cssLoader.js"
-
+import Gachi from "../dist/core/index.js"
+import { importCss } from "../src/modules/cssLoader.js"
 importCss("./index.css")
-
 const container = document.getElementById("root")
-
-const elem = Gachi.createElement(
+const a = Gachi.createElement(
 	"div",
 	null,
-	Gachi.createElement("h1", { style: "display: flex;" }, "first title"),
-	Gachi.createElement(
-		"div",
-		null,
-		Gachi.createElement("h3", { style: "display: flex;" }, "third title"),
-		"just div"
-	),
-	Gachi.createElement("div", { className: "header" }),
-	"aboba"
+	Gachi.createElement("h1", null, "this is jsx transpilation test"),
+	Gachi.createElement("h1", null, "this is jsx transpilation test"),
+	Gachi.createElement("h1", null, "this is jsx transpilation test")
 )
+console.log(a)
 
-console.log(elem)
-// const elem = (
-// 	<div>
-// 		<h1 style="display: flex">first title</h1>
-// 		<h2>second title</h2>
-// 		<div className="header"></div>
-// 		aboba
-// 	</div>
+// const elem = Gachi.createElement(
+// 	"div",
+// 	null,
+// 	Gachi.createElement("h1", { style: "display: flex;" }, "first title"),
+// 	Gachi.createElement(
+// 		"div",
+// 		null,
+// 		Gachi.createElement("h3", { style: "display: flex;" }, "third title"),
+// 		"just div"
+// 	),
+// 	Gachi.createElement("div", { className: "header" }),
+// 	"aboba"
 // )
 
-Gachi.render(elem, container)
+// console.log(elem)
 
-setTimeout(() => {
-	const elem = Gachi.createElement(
-		"div",
-		null,
-		Gachi.createElement("div", { className: "header" }),
-		Gachi.createElement("h2", { style: "display: flex;" }, "first title"),
-		Gachi.createElement(
-			"div",
-			null,
-			Gachi.createElement(
-				"h3",
-				{ style: "display: flex;" },
-				"third title"
-			),
-			"just div"
-		),
-		"aboba"
-	)
+Gachi.render(a, container)
 
-	Gachi.render(elem, container)
-}, 3000)
+// setTimeout(() => {
+// 	const elem = Gachi.createElement(
+// 		"div",
+// 		null,
+// 		Gachi.createElement("div", { className: "header" }),
+// 		Gachi.createElement("h2", { style: "display: flex;" }, "first title"),
+// 		Gachi.createElement(
+// 			"div",
+// 			null,
+// 			Gachi.createElement(
+// 				"h3",
+// 				{ style: "display: flex;" },
+// 				"third title"
+// 			),
+// 			"just div"
+// 		),
+// 		"aboba"
+// 	)
+
+// 	Gachi.render(elem, container)
+// }, 3000)
