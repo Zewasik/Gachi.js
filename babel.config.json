@@ -1,10 +1,12 @@
 {
-   "presets": [],
-  "plugins": [
-    [
-      "@babel/plugin-transform-react-jsx",
-      { "pragma": "Gachi.createElement", 
-      "pragmaFrag": "Gachi.createTextElement" }
-    ]
-  ]
+	"presets": [],
+	"plugins": [
+		[
+			"@babel/plugin-transform-react-jsx",
+			{
+				"pragma": "Gachi.createElement",
+				"pragmaFrag": "Gachi.createTextElement"
+			}
+		]
+	]
 }
