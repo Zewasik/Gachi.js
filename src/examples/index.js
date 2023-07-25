@@ -1,17 +1,7 @@
-import Gachi from "../dist/core/index.js"
-import { importCss } from "../src/modules/cssLoader.js"
+import Gachi from "../core/framework.js"
+import { importCss } from "../modules/cssLoader.js"
 importCss("./index.css")
 const container = document.getElementById("root")
-const a = Gachi.createElement(
-	"div",
-	null,
-	Gachi.createElement("h1", null, "this is jsx transpilation test"),
-	Gachi.createElement("h1", null, "this is jsx transpilation test"),
-	Gachi.createElement("h1", null, "this is jsx transpilation test")
-)
-console.log(a)
-const b = Gachi.test()
-console.log(b)
 
 // const elem = Gachi.createElement(
 // 	"div",
@@ -29,7 +19,7 @@ console.log(b)
 
 // console.log(elem)
 
-Gachi.render(a, container)
+// Gachi.render(elem, container)
 
 // setTimeout(() => {
 // 	const elem = Gachi.createElement(

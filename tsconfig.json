@@ -8,8 +8,7 @@
 		"jsx": "preserve"
 	},
 	"include": [
-		"src/core/*.ts", // Specifies the files to include in the compilation process
-		"src/core/index.tsx"
+		"src/core/*.tsx" // Specifies the files to include in the compilation process
 	],
 	"exclude": [
 		"node_modules" // Specifies the folders/files to exclude from compilation
