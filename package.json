@@ -2,12 +2,11 @@
 	"name": "gachi",
 	"version": "1.0.0",
 	"description": "Small framework for JS, based on gachi memes",
-	"main": "src/gachi.js",
+	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node /src/gachi.js",
-		"build": "babel src -d dist",
-		"examples-jsx": "babel examples --relative -d ./"
+		"start": "webpack serve --mode development",
+		"build": "webpack --mode production"
 	},
 	"repository": {
 		"type": "git",
@@ -31,9 +30,12 @@
 	"devDependencies": {
 		"@babel/core": "^7.22.9",
 		"@babel/plugin-transform-react-jsx": "^7.22.5",
+		"@babel/preset-typescript": "^7.22.5",
 		"babel-loader": "^9.1.3",
+		"ts-loader": "^9.4.4",
 		"typescript": "^5.1.6",
 		"webpack": "^5.88.2",
-		"webpack-cli": "^5.1.4"
+		"webpack-cli": "^5.1.4",
+		"webpack-dev-server": "^4.15.1"
 	}
 }

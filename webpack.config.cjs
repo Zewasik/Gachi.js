@@ -1,21 +1,20 @@
 const path = require("path")
 
 module.exports = {
-	mode: "development",
 	entry: "./src/examples/index.js", // Entry point of the application
 	output: {
-		filename: "main.js", // Output bundle file name
-		path: path.resolve(__dirname, "./src/examples"), // Output directory path
+		path: path.resolve(__dirname, "dist"), // Output directory path
+		filename: "bundle.js", // Output bundle file name
 	},
 	module: {
 		rules: [
 			{
-				test: /\.m?js$/, // Process .js and .mjs files
+				test: /\.(js|jsx|ts|tsx)$/,
 				exclude: /node_modules/, // Exclude node_modules folder from processing
 				use: {
 					loader: "babel-loader", // Use Babel to transpile JavaScript
 					options: {
-						presets: [],
+						presets: ["@babel/preset-typescript"],
 						plugins: [
 							[
 								"@babel/plugin-transform-react-jsx",
@@ -31,7 +30,10 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [".js", ".mjs"], // Add support for resolving .js and .mjs extensions
-		fallback: { path: false, assert: false, fs: false },
+		extensions: [".js", ".jsx", ".ts", ".tsx"], // Add support for resolving .js and .mjs extensions
+	},
+	devServer: {
+		static: path.join(__dirname, "dist"),
+		port: 3000,
 	},
 }

@@ -1,5 +1,3 @@
-import { transform } from "@babel/core"
-
 interface BaseProps {
 	style?: string
 	className?: string
