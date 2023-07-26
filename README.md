@@ -9,8 +9,8 @@ Required:
 
 -   [x] template for project (file system) <- Team 2
 -   [ ] state manager <- Team 1
--   [ ] virtual DOM <- Team 2
--   [ ] element rendering <- Team 2
+-   [x] virtual DOM <- Team 2
+-   [x] element rendering <- Team 2
 -   [ ] event handling <- Team 1
 
 Optonal:
