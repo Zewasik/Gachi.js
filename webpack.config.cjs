@@ -20,7 +20,7 @@ module.exports = {
 								"@babel/plugin-transform-react-jsx",
 								{
 									pragma: "Gachi.createElement",
-									pragmaFrag: "Gachi.createTextElement",
+									pragmaFrag: "Gachi.Fragment",
 								},
 							],
 						],
