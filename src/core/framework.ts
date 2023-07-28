@@ -24,7 +24,7 @@ let currentRoot: { root: HTMLElement | Text; element: GachiElement } | null =
 function useState<T>(initialState: T): [T, (newState: T) => void] {
 	const hookIndex = currentHook
 	if (currentComponent === null) {
-		return [initialState, (newState: T) => {}]
+		throw new Error("no component")
 	}
 
 	let hooks = currentComponent["hooks"] ? currentComponent.hooks : []
@@ -37,15 +37,15 @@ function useState<T>(initialState: T): [T, (newState: T) => void] {
 			? currentComponent!.hooks[hookIndex]
 			: initialState
 
-	console.log(currentComponent, initialState, hookIndex)
-
 	if (hooks[hookIndex] === undefined) {
 		hooks.push(initialState)
 	}
 
 	const setState = (newState: T) => {
-		console.log(newState)
-		hooks[hookIndex] = newState
+		hooks[hookIndex] =
+			typeof newState === "function"
+				? newState(hooks[hookIndex])
+				: newState
 		if (currentRoot !== null) {
 			render(currentRoot.element, currentRoot.root)
 		}
@@ -62,6 +62,7 @@ function createElement(
 	props: BaseProps,
 	...children: Array<GachiElement | string>
 ): GachiElement {
+	children = children.flat()
 	return {
 		type,
 		props: {
