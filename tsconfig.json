@@ -3,12 +3,24 @@
 		"target": "es6",
 		"outDir": "src", // Specifies the output directory for transpiled files
 		"rootDir": "src", // Specifies the input directory where your TS files are located
+		"allowJs": true,
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"module": "esnext",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"noImplicitAny": false,
+		"useUnknownInCatchVariables": false,
 		"moduleResolution": "node",
 		"esModuleInterop": true, // Enables interoperability between CommonJS and ES6 modules
-		"jsx": "preserve"
+		"jsx": "preserve",
+		"strict": true
 	},
 	"include": [
-		"src/core/*.tsx" // Specifies the files to include in the compilation process
+		"src/core/*.ts" // Specifies the files to include in the compilation process
 	],
 	"exclude": [
 		"node_modules" // Specifies the folders/files to exclude from compilation
