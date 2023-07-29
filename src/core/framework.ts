@@ -18,8 +18,7 @@ interface ElementProps extends BaseProps {
 
 let currentHook = 0
 let currentComponent: GachiElement | null = null
-let currentRoot: { root: HTMLElement | Text; element: GachiElement } | null =
-	null
+let currentRoot: { root: HTMLElement; element: GachiElement } | null = null
 
 function useState<T>(initialState: T): [T, (newState: T) => void] {
 	const hookIndex = currentHook
@@ -95,6 +94,7 @@ function renderElement(element: GachiElement, container: HTMLElement | Text) {
 		currentHook = 0
 
 		element = element.type(element.props)
+		console.log(JSON.parse(JSON.stringify(element)))
 	}
 
 	const currentDomElement = createDom(element)
@@ -116,14 +116,10 @@ function renderElement(element: GachiElement, container: HTMLElement | Text) {
 	container.appendChild(currentDomElement)
 }
 
-function render(element: GachiElement, container: HTMLElement | Text) {
+function render(element: GachiElement, container: HTMLElement) {
 	currentRoot = { element, root: container }
 
-	if (container.childNodes.length > 0) {
-		container.childNodes.forEach((child) => {
-			container.removeChild(child)
-		})
-	}
+	container.innerHTML = ""
 
 	renderElement(element, container)
 }
