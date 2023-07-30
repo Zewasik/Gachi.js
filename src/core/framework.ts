@@ -1,67 +1,13 @@
-import { isEvent, isProps } from "../utils/filters"
-
-interface GachiElement {
-	type: string | Function
-	props?: ElementProps
-	hooks?: any[]
-}
-
-interface BaseProps {
-	style?: string
-	className?: string
-	nodeValue?: string
-}
-
-interface ElementProps extends BaseProps {
-	children?: Array<GachiElement | string>
-}
-
-let currentHook = 0
-let currentComponent: GachiElement | null = null
-let currentRoot: { root: HTMLElement; element: GachiElement } | null = null
-
-function useState<T>(initialState: T): [T, (newState: T) => void] {
-	const hookIndex = currentHook
-	if (currentComponent === null) {
-		throw new Error("no component")
-	}
-
-	let hooks = currentComponent["hooks"] ? currentComponent.hooks : []
-
-	currentComponent["hooks"] =
-		currentComponent["hooks"] === undefined ? [] : currentComponent["hooks"]
-
-	initialState =
-		currentComponent && currentComponent.hooks[hookIndex]
-			? currentComponent!.hooks[hookIndex]
-			: initialState
-
-	if (hooks[hookIndex] === undefined) {
-		hooks.push(initialState)
-	}
-
-	const setState = (newState: T) => {
-		hooks[hookIndex] =
-			typeof newState === "function"
-				? newState(hooks[hookIndex])
-				: newState
-		if (currentRoot !== null) {
-			render(currentRoot.element, currentRoot.root)
-		}
-	}
-
-	currentComponent.hooks = hooks
-	currentHook++
-
-	return [currentComponent.hooks[hookIndex], setState]
-}
+import { createDom } from "./dom"
+import Globals from "./global"
+import { useState } from "./hooks"
 
 function createElement(
 	type: string,
 	props: BaseProps,
 	...children: Array<GachiElement | string>
 ): GachiElement {
-	children = children.flat()
+	children = children.flat().filter((child) => child !== null)
 	return {
 		type,
 		props: {
@@ -84,76 +30,107 @@ function createTextElement(text: string): GachiElement {
 	}
 }
 
-function Fragment(props: ElementProps) {
+function updateRealDom(rootElement: GachiElement) {
+	;(rootElement.dom as HTMLElement).innerHTML = ""
+	updateNode(rootElement.child)
+}
+
+function updateNode(element: GachiElement | undefined) {
+	if (!element || !element.parent) return
+
+	let domParentFiber: GachiElement = element.parent
+	while (!domParentFiber.dom) {
+		domParentFiber = domParentFiber.parent!
+	}
+	const parentDom = domParentFiber.dom
+
+	if (element.dom) {
+		parentDom.appendChild(element.dom)
+	}
+
+	updateNode(element.child)
+	updateNode(element.sibling)
+}
+
+export function Fragment(props: ElementProps) {
 	return props.children
 }
 
-function renderElement(element: GachiElement, container: HTMLElement | Text) {
-	if (typeof element.type === "function") {
-		currentComponent = element
-		currentHook = 0
-
-		element = element.type(element.props)
-		console.log(JSON.parse(JSON.stringify(element)))
-	}
-
-	const currentDomElement = createDom(element)
-	if (currentDomElement === undefined) {
-		return
-	}
-	if (!element.props || !element.props.children) {
-		return
-	}
-
-	for (const child of element.props.children) {
-		if (typeof child === "string") {
-			continue
-		}
-
-		renderElement(child, currentDomElement)
-	}
-
-	container.appendChild(currentDomElement)
-}
-
 function render(element: GachiElement, container: HTMLElement) {
-	currentRoot = { element, root: container }
-
-	container.innerHTML = ""
-
-	renderElement(element, container)
-}
-
-function createDom(element: GachiElement) {
-	if (typeof element.type !== "string") {
-		return
+	const root: GachiElement = {
+		type: "ROOT",
+		props: {
+			children: [element],
+		},
+		dom: container,
 	}
 
-	const dom =
-		element.type === "TEXT_ELEMENT"
-			? document.createTextNode("")
-			: document.createElement(element.type)
+	workLoop(root)
+}
 
-	const temp = Object.entries(element.props || {}).filter(([key]) =>
-		isProps(key)
-	)
+export function workLoop(element: GachiElement) {
+	let domParentFiber: GachiElement | null = element
+	while (!domParentFiber.dom) {
+		domParentFiber = domParentFiber.parent!
+	}
 
-	temp.filter(([key, value]) => isEvent(key, value)).forEach(
-		([key, value]) => {
-			dom.addEventListener(key.substring(2).toLowerCase(), value)
+	const temp = domParentFiber
+
+	while (domParentFiber) {
+		domParentFiber = setUpFiberTree(domParentFiber)
+	}
+	if (temp) {
+		updateRealDom(temp)
+	}
+}
+
+function setUpFiberTree(pointElement: GachiElement): GachiElement | null {
+	if (pointElement.type instanceof Function) {
+		Globals.currentComponent = pointElement
+		Globals.currentHook = 0
+
+		let children = pointElement.type(pointElement.props)
+		children = Array.isArray(children) ? children : [children]
+		parseChildren(pointElement, children)
+	} else {
+		if (!pointElement.dom) {
+			createDom(pointElement)
 		}
-	)
+		parseChildren(pointElement, pointElement.props.children)
+	}
 
-	temp.forEach(([key, value]) => {
-		dom[key] = value
-	})
+	if (pointElement.child) {
+		return pointElement.child
+	}
 
-	return dom
+	let nextFiber: GachiElement | undefined = pointElement
+	while (nextFiber) {
+		if (nextFiber.sibling) {
+			return nextFiber.sibling
+		}
+		nextFiber = nextFiber.parent
+	}
+
+	return null
+}
+
+function parseChildren(element: GachiElement, children: GachiElement[]) {
+	let prevSibling: GachiElement | null = null
+	for (const [i, child] of children.entries()) {
+		if (i === 0) {
+			element.child = child
+		} else if (prevSibling) {
+			prevSibling.sibling = child
+		}
+		child.parent = element
+		prevSibling = child
+	}
 }
 
 export default {
 	createElement,
 	createTextElement,
 	render,
+	Fragment,
 	useState,
 }

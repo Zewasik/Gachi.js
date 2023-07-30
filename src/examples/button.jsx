@@ -1,30 +1,18 @@
 import Gachi from "../core/framework"
+import { useState } from "../core/hooks"
 
-export default function Button() {
-	const [count, setCount] = Gachi.useState(0)
-	const [count2, setCount2] = Gachi.useState(500)
+export default function Button({ value = "default" }) {
+	const [c, setC] = Gachi.useState(0)
 
 	return (
-		<div>
-			<button
-				onClick={() => {
-					setCount(count + 1)
-					setCount2(count2 + 500)
-				}}
-				className="main-button"
-			>
-				Suka blyat {count} {count2}
+		<>
+			<button onClick={() => setC(c + 1)} className="main-button">
+				{value} {c}
 			</button>
-			<button
-				onClick={() => {
-					setCount(0)
-					setCount2(500)
-				}}
-				className="main-button"
-			>
+			<button onClick={() => setC(0)} className="main-button">
 				Reset
 			</button>
-			{count > 10 ? <Button /> : <a></a>}
-		</div>
+			{c > 5 ? <Button /> : null}
+		</>
 	)
 }
