@@ -1,8 +1,8 @@
-import Gachi from "../core/framework"
-import { useState } from "../core/hooks"
+import Gachi, { useState } from "../core/framework"
+// import Hooks from "../core/hooks"
 
 export default function Button({ value = "default" }) {
-	const [c, setC] = Gachi.useState(0)
+	const [c, setC] = useState(0)
 
 	return (
 		<>
