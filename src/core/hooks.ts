@@ -67,6 +67,10 @@ export class Hooks extends VirtualDom {
 	}
 
 	useContext(name: string): any {
+		if (this._currentComponent === null) {
+			throw new Error("no component")
+		}
+
 		if (!this._currentContext.has(name))
 			throw new Error(
 				`Context with name \`${name}\` was not found. Check your code`
@@ -76,6 +80,10 @@ export class Hooks extends VirtualDom {
 	}
 
 	useNavigate(): (url: string) => void {
+		if (this._currentComponent === null) {
+			throw new Error("no component")
+		}
+
 		return (url: string) => {
 			const startUrl = document.location.pathname
 			url = url.charAt(0) === "/" ? url : "/" + url
