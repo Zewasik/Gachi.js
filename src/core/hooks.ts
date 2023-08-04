@@ -3,7 +3,7 @@ import { VirtualDom } from "./virtualDom"
 export class Hooks extends VirtualDom {
 	private _currentComponent: FiberElement | null
 	private _currentHook: number
-	private currentContext: Map<string, any> = new Map<string, any>()
+	private _currentContext: Map<string, any> = new Map<string, any>()
 
 	constructor() {
 		super()
@@ -47,6 +47,7 @@ export class Hooks extends VirtualDom {
 			}
 
 			if (this.currentRoot) {
+				this.clearContext()
 				this.workLoop({
 					props: { children: this.currentRoot.props.children },
 					type: "ROOT",
@@ -67,19 +68,23 @@ export class Hooks extends VirtualDom {
 			throw new Error("no component")
 		}
 
-		if (this.currentContext.has(name))
+		if (this._currentContext.has(name))
 			throw new Error(`Context with name \`${name}\` already exists`)
 
-		this.currentContext.set(name, initialState)
+		this._currentContext.set(name, initialState)
 	}
 
 	useContext(name: string) {
-		if (!this.currentContext.has(name))
+		if (!this._currentContext.has(name))
 			throw new Error(
 				`Context with name \`${name}\` was not found. Check your code`
 			)
 
-		return this.currentContext.get(name)
+		return this._currentContext.get(name)
+	}
+
+	private clearContext() {
+		this._currentContext.clear()
 	}
 
 	set currentComponent(c: FiberElement | null) {

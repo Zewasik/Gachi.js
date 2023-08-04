@@ -6,13 +6,14 @@ importCss("./index.css")
 const container = document.getElementById("root")
 
 function App() {
-	Gachi.createContext("top level", 9000)
+	const [c, setC] = useState(0)
+	Gachi.createContext("count", { c, setC })
 
 	return (
 		<div>
 			<h1 style={"display: flex;"}>first title</h1>
 			<div id="aboba">
-				{[1].map((i) => {
+				{[1, 2, 3].map((i) => {
 					return (
 						<div className="pizdec">
 							<Button value={"no default " + i} />
@@ -41,22 +42,26 @@ function FirstLevelB() {
 
 function SecondLevelA() {
 	const ctx = useContext("undefined")
-	const ctx2 = useContext("top level")
+	const { c } = useContext("count")
 
 	return (
 		<h1>
-			I m first context: {ctx}, I m top level: {ctx2}
+			I m first context: {ctx}, I m top level: {c}
 		</h1>
 	)
 }
+
 function SecondLevelB() {
 	const ctx = useContext("number")
-	const ctx2 = useContext("top level")
+	const { c, setC } = useContext("count")
 
 	return (
-		<h1>
-			I m second context: {ctx}, I m top level: {ctx2}
-		</h1>
+		<>
+			<h1>
+				I m first context: {ctx}, I m top level: {c}
+			</h1>
+			<button onClick={() => setC(0)}>Reset top level hook</button>
+		</>
 	)
 }
 
