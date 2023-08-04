@@ -46,15 +46,7 @@ export class Hooks extends VirtualDom {
 				return
 			}
 
-			if (this.currentRoot) {
-				this.clearContext()
-				this.workLoop({
-					props: { children: this.currentRoot.props.children },
-					type: "ROOT",
-					dom: this.currentRoot.dom,
-					alternate: this.currentRoot,
-				})
-			}
+			this.triggerRender()
 		}
 
 		this._currentComponent.hooks = hooks
@@ -74,7 +66,7 @@ export class Hooks extends VirtualDom {
 		this._currentContext.set(name, initialState)
 	}
 
-	useContext(name: string) {
+	useContext(name: string): any {
 		if (!this._currentContext.has(name))
 			throw new Error(
 				`Context with name \`${name}\` was not found. Check your code`
@@ -83,8 +75,32 @@ export class Hooks extends VirtualDom {
 		return this._currentContext.get(name)
 	}
 
+	useNavigate(): (url: string) => void {
+		return (url: string) => {
+			const startUrl = document.location.pathname
+			url = url.charAt(0) === "/" ? url : "/" + url
+
+			if (url === startUrl) return
+
+			history.pushState({}, "", url)
+			this.triggerRender()
+		}
+	}
+
 	private clearContext() {
 		this._currentContext.clear()
+	}
+
+	private triggerRender() {
+		if (this.currentRoot) {
+			this.clearContext()
+			this.workLoop({
+				props: { children: this.currentRoot.props.children },
+				type: "ROOT",
+				dom: this.currentRoot.dom,
+				alternate: this.currentRoot,
+			})
+		}
 	}
 
 	set currentComponent(c: FiberElement | null) {

@@ -33,6 +33,7 @@ function Fragment(props: ElementProps) {
 
 export const useState = hooksInst.useState.bind(hooksInst)
 export const useContext = hooksInst.useContext.bind(hooksInst)
+export const useNavigate = hooksInst.useNavigate.bind(hooksInst)
 
 export default {
 	createElement,

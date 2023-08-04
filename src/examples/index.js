@@ -1,4 +1,4 @@
-import Gachi, { useContext, useState } from "../core/framework.ts"
+import Gachi, { useContext, useNavigate, useState } from "../core/framework.ts"
 import { importCss } from "../modules/cssLoader.js"
 import Button from "./button.jsx"
 importCss("./index.css")
@@ -7,6 +7,7 @@ const container = document.getElementById("root")
 
 function App() {
 	const [c, setC] = useState(0)
+	const navigate = useNavigate()
 	Gachi.createContext("count", { c, setC })
 
 	return (
@@ -21,7 +22,9 @@ function App() {
 					)
 				})}
 			</div>
-			<div className="header">aboba</div>
+			<div className="header" onClick={() => navigate("/123")}>
+				aboba
+			</div>
 			<FirstLevelA />
 			<FirstLevelB />
 		</div>
