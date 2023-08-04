@@ -1,28 +1,50 @@
 import { isEvent, isProps } from "../utils/filters"
 
-export function updateRealDom(rootElement: GachiElement) {
-	;(rootElement.dom as HTMLElement).innerHTML = ""
+export function updateRealDom(
+	rootElement: FiberElement,
+	toDelete: FiberElement[] = []
+) {
+	for (let element of toDelete) {
+		updateNode(element)
+	}
 	updateNode(rootElement.child)
 }
 
-function updateNode(element: GachiElement | undefined) {
+function updateNode(element: FiberElement | undefined) {
 	if (!element || !element.parent) return
 
-	let domParentFiber: GachiElement = element.parent
+	let domParentFiber: FiberElement = element.parent
 	while (!domParentFiber.dom) {
 		domParentFiber = domParentFiber.parent!
 	}
 	const parentDom = domParentFiber.dom
 
 	if (element.dom) {
-		parentDom.appendChild(element.dom)
+		if (element.effectTag === "COMMIT") {
+			parentDom.appendChild(element.dom)
+		} else if (element.effectTag === "UPDATE") {
+			updateDomNode(element.dom, element.props, element.alternate?.props)
+		}
+	}
+	if (element.effectTag === "DELETE") {
+		deleteNode(element, parentDom)
 	}
 
 	updateNode(element.child)
 	updateNode(element.sibling)
 }
 
-export function createDom(element: GachiElement) {
+function deleteNode(element: FiberElement, parentDom: HTMLElement | Text) {
+	if (!element) return
+
+	if (element.dom) {
+		parentDom.removeChild(element.dom)
+	} else if (element.child) {
+		deleteNode(element.child, parentDom)
+	}
+}
+
+export function createDom(element: FiberElement) {
 	if (typeof element.type !== "string") {
 		return
 	}
@@ -37,16 +59,35 @@ export function createDom(element: GachiElement) {
 	element.dom = dom
 }
 
-function updateDomNode(dom: HTMLElement | Text, props: ElementProps) {
-	const temp = Object.entries(props || {}).filter(([key]) => isProps(key))
-
-	temp.filter(([key, value]) => isEvent(key, value)).forEach(
-		([key, value]) => {
-			dom.addEventListener(key.substring(2).toLowerCase(), value)
-		}
+function updateDomNode(
+	dom: HTMLElement | Text,
+	newProps: ElementProps,
+	oldProps: ElementProps = { children: [] }
+) {
+	const oldPropsArr = Object.entries(oldProps || {}).filter(([key]) =>
+		isProps(key)
+	)
+	const newPropsArr = Object.entries(newProps || {}).filter(([key]) =>
+		isProps(key)
 	)
 
-	temp.forEach(([key, value]) => {
+	oldPropsArr
+		.filter(([key, value]) => isEvent(key, value))
+		.forEach(([key, eventFunc]) => {
+			dom.removeEventListener(key.substring(2).toLowerCase(), eventFunc)
+		})
+
+	newPropsArr
+		.filter(([key, value]) => isEvent(key, value))
+		.forEach(([key, eventFunc]) => {
+			dom.addEventListener(key.substring(2).toLowerCase(), eventFunc)
+		})
+
+	oldPropsArr.forEach(([key, value]) => {
+		dom[key] = ""
+	})
+
+	newPropsArr.forEach(([key, value]) => {
 		dom[key] = value
 	})
 }

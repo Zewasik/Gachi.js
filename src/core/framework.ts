@@ -1,4 +1,3 @@
-import { render } from "./virtualDom"
 import hooksInst from "./hooks"
 
 function createElement(
@@ -15,7 +14,6 @@ function createElement(
 				typeof child === "object" ? child : createTextElement(child)
 			),
 		},
-		hooks: [],
 	}
 }
 
@@ -38,6 +36,6 @@ export const useState = hooksInst.useState.bind(hooksInst)
 export default {
 	createElement,
 	createTextElement,
-	render,
+	render: hooksInst.render.bind(hooksInst),
 	Fragment,
 }

@@ -1,10 +1,11 @@
-import { workLoop } from "./virtualDom"
+import { VirtualDom } from "./virtualDom"
 
-export class Hooks {
-	private _currentComponent: GachiElement | null
+export class Hooks extends VirtualDom {
+	private _currentComponent: FiberElement | null
 	private _currentHook: number
 
 	constructor() {
+		super()
 		this._currentComponent = null
 		this._currentHook = 0
 	}
@@ -14,22 +15,18 @@ export class Hooks {
 			throw new Error("no component")
 		}
 
-		const temp = { ...this._currentComponent } as GachiElement
 		const hookIndex = this._currentHook
+		let hooks: any[] = []
 
-		let hooks = this._currentComponent["hooks"]
-			? this._currentComponent.hooks
-			: []
-
-		this._currentComponent["hooks"] =
-			this._currentComponent["hooks"] === undefined
-				? []
-				: this._currentComponent["hooks"]
-
-		initialState =
-			this._currentComponent && this._currentComponent.hooks[hookIndex]
-				? this._currentComponent!.hooks[hookIndex]
-				: initialState
+		if (
+			this._currentComponent.alternate &&
+			this._currentComponent.alternate.hooks
+		) {
+			hooks = this._currentComponent.alternate.hooks
+			if (this._currentComponent.alternate.hooks[hookIndex]) {
+				initialState = this._currentComponent.alternate.hooks[hookIndex]
+			}
+		}
 
 		if (hooks[hookIndex] === undefined) {
 			hooks.push(initialState)
@@ -48,8 +45,13 @@ export class Hooks {
 				return
 			}
 
-			if (temp.parent) {
-				workLoop(temp.parent)
+			if (this.currentRoot) {
+				this.workLoop({
+					props: { children: this.currentRoot.props.children },
+					type: "ROOT",
+					dom: this.currentRoot.dom,
+					alternate: this.currentRoot,
+				})
 			}
 		}
 
@@ -59,7 +61,7 @@ export class Hooks {
 		return [this._currentComponent.hooks[hookIndex], setState]
 	}
 
-	set currentComponent(c: GachiElement | null) {
+	set currentComponent(c: FiberElement | null) {
 		this._currentComponent = c
 		this._currentHook = 0
 	}

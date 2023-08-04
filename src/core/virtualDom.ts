@@ -1,73 +1,117 @@
 import { createDom, updateRealDom } from "./dom"
 import hooksInst from "./hooks"
 
-export function workLoop(element: GachiElement) {
-	let domParentFiber: GachiElement | null = element
-	while (!domParentFiber.dom) {
-		domParentFiber = domParentFiber.parent!
-	}
+export class VirtualDom {
+	currentRoot: FiberElement | null = null
+	deletitionList: FiberElement[] = []
 
-	const temp = domParentFiber
+	workLoop(element: FiberElement) {
+		let domParentFiber: FiberElement | null = element
 
-	while (domParentFiber) {
-		domParentFiber = setUpFiberTree(domParentFiber)
-	}
-	if (temp) {
-		updateRealDom(temp)
-	}
-}
-
-function setUpFiberTree(pointElement: GachiElement): GachiElement | null {
-	if (pointElement.type instanceof Function) {
-		hooksInst.currentComponent = pointElement
-		let children = pointElement.type(pointElement.props)
-		hooksInst.currentComponent = null
-
-		children = Array.isArray(children) ? children : [children]
-		parseChildren(pointElement, children)
-	} else {
-		if (!pointElement.dom) {
-			createDom(pointElement)
+		while (domParentFiber) {
+			domParentFiber = this.setUpFiberTree(domParentFiber)
 		}
-		parseChildren(pointElement, pointElement.props.children)
-	}
 
-	if (pointElement.child) {
-		return pointElement.child
-	}
-
-	let nextFiber: GachiElement | undefined = pointElement
-	while (nextFiber) {
-		if (nextFiber.sibling) {
-			return nextFiber.sibling
+		if (element) {
+			updateRealDom(element, this.deletitionList)
 		}
-		nextFiber = nextFiber.parent
+
+		this.deletitionList = []
+		this.currentRoot = element
 	}
 
-	return null
-}
+	private setUpFiberTree(pointElement: FiberElement): FiberElement | null {
+		if (pointElement.type instanceof Function) {
+			hooksInst.currentComponent = pointElement
+			let children = pointElement.type(pointElement.props)
+			hooksInst.currentComponent = null
 
-function parseChildren(element: GachiElement, children: GachiElement[]) {
-	let prevSibling: GachiElement | null = null
-	for (const [i, child] of children.entries()) {
-		if (i === 0) {
-			element.child = child
-		} else if (prevSibling) {
-			prevSibling.sibling = child
+			children = (
+				Array.isArray(children) ? children : [children]
+			) as GachiElement[]
+
+			this.parseChildren(pointElement, children)
+		} else {
+			if (!pointElement.dom) {
+				createDom(pointElement)
+			}
+			this.parseChildren(pointElement, pointElement.props.children)
 		}
-		child.parent = element
-		prevSibling = child
-	}
-}
 
-export function render(element: GachiElement, container: HTMLElement) {
-	const root: GachiElement = {
-		type: "ROOT",
-		props: {
-			children: [element],
-		},
-		dom: container,
+		if (pointElement.child) {
+			return pointElement.child
+		}
+
+		let nextFiber: FiberElement | undefined = pointElement
+		while (nextFiber) {
+			if (nextFiber.sibling) {
+				return nextFiber.sibling
+			}
+			nextFiber = nextFiber.parent
+		}
+
+		return null
 	}
 
-	workLoop(root)
+	private parseChildren(element: FiberElement, children: GachiElement[]) {
+		let prevSibling: FiberElement | null = null
+		let alternateChild = element.alternate && element.alternate.child
+		let index: number = 0
+
+		while (index < children.length || alternateChild) {
+			let newFiberElement: FiberElement | null = null
+
+			const child = children[index]
+			const sameType =
+				child && alternateChild && child.type == alternateChild.type
+
+			if (sameType) {
+				newFiberElement = {
+					type: child.type,
+					props: child.props,
+					parent: element,
+					dom: alternateChild?.dom,
+					effectTag: "UPDATE",
+					alternate: alternateChild,
+				}
+			} else if (child) {
+				newFiberElement = {
+					type: child.type,
+					props: child.props,
+					parent: element,
+					effectTag: "COMMIT",
+				}
+			} else if (alternateChild) {
+				alternateChild.effectTag = "DELETE"
+				this.deletitionList.push(alternateChild)
+				// TODO: fix deletition -> remove doesn't work properly for functional component
+			}
+
+			if (index === 0) {
+				element.child = newFiberElement!
+			} else if (prevSibling) {
+				prevSibling.sibling = newFiberElement!
+			}
+			prevSibling = newFiberElement
+
+			if (alternateChild) {
+				alternateChild = alternateChild.sibling
+			}
+
+			index++
+		}
+	}
+
+	render(element: GachiElement, container: HTMLElement) {
+		const root: FiberElement = {
+			type: "ROOT",
+			props: {
+				children: [element],
+			},
+			dom: container,
+			alternate: this.currentRoot || undefined,
+		}
+
+		this.workLoop(root)
+	}
 }

@@ -10,9 +10,9 @@ function App() {
 		<div>
 			<h1 style={"display: flex;"}>first title</h1>
 			<div id="aboba">
-				{[1, 2, 3].map((i) => {
+				{[1].map((i) => {
 					return (
-						<div>
+						<div className="pizdec">
 							<Button value={"no default " + i} />
 						</div>
 					)
