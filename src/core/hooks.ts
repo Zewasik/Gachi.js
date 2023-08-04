@@ -17,7 +17,9 @@ export class Hooks extends VirtualDom {
 		}
 
 		const hookIndex = this._currentHook
-		let hooks: any[] = []
+		let hooks: Hook[] = this._currentComponent.hooks
+			? this._currentComponent.hooks
+			: []
 
 		if (
 			this._currentComponent.alternate &&
@@ -25,23 +27,27 @@ export class Hooks extends VirtualDom {
 		) {
 			hooks = this._currentComponent.alternate.hooks
 			if (this._currentComponent.alternate.hooks[hookIndex]) {
-				initialState = this._currentComponent.alternate.hooks[hookIndex]
+				initialState =
+					this._currentComponent.alternate.hooks[hookIndex].value
 			}
 		}
 
 		if (hooks[hookIndex] === undefined) {
-			hooks.push(initialState)
+			hooks.push({ hookName: "STATE", value: initialState })
 		}
 
 		const setState = (newState: T) => {
-			const prevValue = hooks[hookIndex]
+			const prevValue = hooks[hookIndex].value
 
 			hooks[hookIndex] =
 				typeof newState === "function"
-					? newState(hooks[hookIndex])
-					: newState
+					? {
+							hookName: "STATE",
+							value: newState(hooks[hookIndex].value),
+					  }
+					: { hookName: "STATE", value: newState }
 
-			if (prevValue === hooks[hookIndex]) {
+			if (prevValue === hooks[hookIndex].value) {
 				console.log("same value")
 				return
 			}
@@ -52,7 +58,7 @@ export class Hooks extends VirtualDom {
 		this._currentComponent.hooks = hooks
 		this._currentHook++
 
-		return [this._currentComponent.hooks[hookIndex], setState]
+		return [this._currentComponent.hooks[hookIndex].value, setState]
 	}
 
 	createContext<T>(name: string, initialState: T) {
@@ -93,6 +99,41 @@ export class Hooks extends VirtualDom {
 			history.pushState({}, "", url)
 			this.triggerRender()
 		}
+	}
+
+	useEffect(callback: () => {}, dependancies: Array<any>) {
+		if (!this._currentComponent) {
+			throw new Error("no component")
+		}
+
+		const hookIndex = this._currentHook
+		let hooks: Hook[] = this._currentComponent.hooks
+			? this._currentComponent.hooks
+			: []
+
+		if (
+			this._currentComponent.alternate &&
+			this._currentComponent.alternate.hooks
+		) {
+			hooks = this._currentComponent.alternate.hooks
+		}
+
+		if (hooks[hookIndex] === undefined) {
+			hooks.push({ hookName: "EFFECT", value: dependancies })
+		}
+
+		if (
+			hooks[hookIndex].value.length === dependancies.length &&
+			hooks[hookIndex].value.every(
+				(value: any, i: number) => !Object.is(value, dependancies[i])
+			)
+		) {
+			callback()
+			hooks[hookIndex] = { hookName: "EFFECT", value: dependancies }
+		}
+
+		this._currentComponent.hooks = hooks
+		this._currentHook++
 	}
 
 	private clearContext() {

@@ -1,4 +1,9 @@
-import Gachi, { useContext, useNavigate, useState } from "../core/framework.ts"
+import Gachi, {
+	useContext,
+	useEffect,
+	useNavigate,
+	useState,
+} from "../core/framework.ts"
 import { importCss } from "../modules/cssLoader.js"
 import Button from "./button.jsx"
 importCss("./index.css")
@@ -7,8 +12,13 @@ const container = document.getElementById("root")
 
 function App() {
 	const [c, setC] = useState(0)
+	const [g, setG] = useState("gg")
+
 	const navigate = useNavigate()
 	Gachi.createContext("count", { c, setC })
+	useEffect(() => {
+		console.log("This is your useeffect callback")
+	}, [c])
 
 	return (
 		<div>
@@ -27,6 +37,13 @@ function App() {
 			</div>
 			<FirstLevelA />
 			<FirstLevelB />
+			<div>This is your text: {g}</div>
+			<input
+				type="text"
+				onKeyDown={(e) => {
+					if (e.key === "Enter") setG(e.currentTarget.value)
+				}}
+			></input>
 		</div>
 	)
 }
