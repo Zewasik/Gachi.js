@@ -1,4 +1,3 @@
-import { json } from "stream/consumers"
 import { workLoop } from "./framework"
 import Globals from "./global"
 
@@ -45,3 +44,30 @@ export function useState<T>(initialState: T): [T, (newState: T) => void] {
 
 	return [Globals.currentComponent.hooks[hookIndex], setState]
 }
+
+class Context {
+	private currentContext: Map<string, any> = new Map<string, any>()
+
+	createContext<T>(name: string, initialState: T) {
+		if (Globals.currentComponent === null) {
+			throw new Error("no component")
+		}
+
+		if (this.currentContext.has(name))
+			throw new Error(`Context with name \`${name}\` already exists`)
+
+		this.currentContext.set(name, initialState)
+	}
+
+	useContext(name: string) {
+		if (!this.currentContext.has(name))
+			throw new Error(
+				`Context with name \`${name}\` was not found. Check your code`
+			)
+
+		return this.currentContext.get(name)
+	}
+}
+
+const Aboba = new Context()
+export { Aboba }
