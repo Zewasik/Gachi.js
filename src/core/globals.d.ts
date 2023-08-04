@@ -1,10 +1,15 @@
 interface GachiElement {
-	type: string | Function
-	dom?: HTMLElement | Text
-	parent?: GachiElement
-	sibling?: GachiElement
-	child?: GachiElement
+	type: string | ((props: ElementProps) => GachiElement | GachiElement[])
 	props: ElementProps
+}
+
+interface FiberElement extends GachiElement {
+	dom?: HTMLElement | Text
+	parent?: FiberElement
+	sibling?: FiberElement
+	child?: FiberElement
+	alternate?: FiberElement
+	effectTag?: string
 	hooks?: any[]
 }
 

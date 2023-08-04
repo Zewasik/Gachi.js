@@ -1,5 +1,4 @@
-import Gachi from "../core/framework.ts"
-import { Aboba } from "../core/hooks.ts"
+import Gachi, { useContext, useState } from "../core/framework.ts"
 import { importCss } from "../modules/cssLoader.js"
 import Button from "./button.jsx"
 importCss("./index.css")
@@ -7,15 +6,15 @@ importCss("./index.css")
 const container = document.getElementById("root")
 
 function App() {
-	Aboba.createContext("top level", 9000)
+	Gachi.createContext("top level", 9000)
 
 	return (
 		<div>
 			<h1 style={"display: flex;"}>first title</h1>
 			<div id="aboba">
-				{[1, 2, 3].map((i) => {
+				{[1].map((i) => {
 					return (
-						<div>
+						<div className="pizdec">
 							<Button value={"no default " + i} />
 						</div>
 					)
@@ -29,20 +28,20 @@ function App() {
 }
 
 function FirstLevelA() {
-	Aboba.createContext("undefined", "really totally undefined")
+	Gachi.createContext("undefined", "really totally undefined")
 
 	return <SecondLevelA />
 }
 
 function FirstLevelB() {
-	Aboba.createContext("number", 555)
+	Gachi.createContext("number", 555)
 
 	return <SecondLevelB />
 }
 
 function SecondLevelA() {
-	const ctx = Aboba.useContext("undefined")
-	const ctx2 = Aboba.useContext("top level")
+	const ctx = useContext("undefined")
+	const ctx2 = useContext("top level")
 
 	return (
 		<h1>
@@ -51,8 +50,8 @@ function SecondLevelA() {
 	)
 }
 function SecondLevelB() {
-	const ctx = Aboba.useContext("number")
-	const ctx2 = Aboba.useContext("top level")
+	const ctx = useContext("number")
+	const ctx2 = useContext("top level")
 
 	return (
 		<h1>
