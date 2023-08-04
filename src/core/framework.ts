@@ -32,10 +32,12 @@ function Fragment(props: ElementProps) {
 }
 
 export const useState = hooksInst.useState.bind(hooksInst)
+export const useContext = hooksInst.useContext.bind(hooksInst)
 
 export default {
 	createElement,
 	createTextElement,
 	render: hooksInst.render.bind(hooksInst),
 	Fragment,
+	createContext: hooksInst.createContext.bind(hooksInst),
 }
