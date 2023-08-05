@@ -101,7 +101,10 @@ export class Hooks extends VirtualDom {
 		}
 	}
 
-	useEffect(callback: () => {}, dependancies: Array<any>) {
+	useEffect(
+		callback: () => () => void,
+		dependancies: Array<any> | null = null
+	) {
 		if (!this._currentComponent) {
 			throw new Error("no component")
 		}
@@ -119,17 +122,26 @@ export class Hooks extends VirtualDom {
 		}
 
 		if (hooks[hookIndex] === undefined) {
-			hooks.push({ hookName: "EFFECT", value: dependancies })
-		}
-
-		if (
-			hooks[hookIndex].value.length === dependancies.length &&
-			hooks[hookIndex].value.every(
-				(value: any, i: number) => !Object.is(value, dependancies[i])
-			)
+			hooks.push({
+				hookName: "EFFECT",
+				value: dependancies,
+				callbackResult: callback(),
+			})
+		} else if (
+			!dependancies ||
+			(hooks[hookIndex].value.length > 0 &&
+				hooks[hookIndex].value.length === dependancies.length &&
+				hooks[hookIndex].value.every(
+					(value: any, i: number) =>
+						!Object.is(value, dependancies[i])
+				))
 		) {
-			callback()
-			hooks[hookIndex] = { hookName: "EFFECT", value: dependancies }
+			hooks[hookIndex].callbackResult?.call(null)
+			hooks[hookIndex] = {
+				hookName: "EFFECT",
+				value: dependancies,
+				callbackResult: callback(),
+			}
 		}
 
 		this._currentComponent.hooks = hooks

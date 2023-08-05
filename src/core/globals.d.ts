@@ -26,4 +26,5 @@ interface ElementProps extends BaseProps {
 interface Hook {
 	hookName: string
 	value: any
+	callbackResult?: () => void
 }

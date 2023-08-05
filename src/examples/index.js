@@ -18,7 +18,8 @@ function App() {
 	Gachi.createContext("count", { c, setC })
 	useEffect(() => {
 		console.log("This is your useeffect callback")
-	}, [c])
+		return () => console.log("This is your useeffect cleanup callback")
+	}, [])
 
 	return (
 		<div>
