@@ -123,13 +123,17 @@ Explanation:
 
 ## Hooks
 
-Gachi.js provides hooks to manage state and side effects within functional components. The `useState` hook allows you to add state to a functional component. Here's an example of using the `useState` hook:
+Gachi.js provides hooks to manage state and side effects within functional components. In Gachi.js, hooks are implemented using the `Hooks` class, which extends the `VirtualDom` class for handling virtual DOM updates.
+
+### useState
+
+The `useState` hook allows you to add state to a functional component. Here's an example of using the `useState` hook:
 
 ```jsx
-import Gachi from "/src/core/framework.ts"
+import Gachi, { useState } from "/src/core/framework.ts"
 
 function Counter() {
-	const [count, setCount] = Gachi.useState(0)
+	const [count, setCount] = useState(0)
 
 	function handleIncrement() {
 		setCount(count + 1)
@@ -153,3 +157,121 @@ Explanation:
 1. We use the `useState` hook from Gachi to add state to the `Counter` component. The `count` state variable and the `setCount` function to update it are obtained from the `useState` hook.
 2. When the "Increment" button is clicked, the `handleIncrement` function is called, updating the `count` state.
 3. The updated `count` is displayed in the component, and clicking the button increments its value.
+
+### useEffect
+
+The `useEffect` hook allows you to perform side effects in functional components, such as data fetching, subscriptions, or manually interacting with the DOM. Here's an example of using the `useEffect` hook:
+
+```jsx
+import Gachi, { useState, useEffect } from "/src/core/framework.ts"
+
+function Timer() {
+	const [count, setCount] = useState(0)
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			setCount((prevCount) => prevCount + 1)
+		}, 1000)
+
+		return () => {
+			clearInterval(intervalId)
+		}
+	}, [])
+
+	return (
+		<div>
+			<p>Count: {count}</p>
+		</div>
+	)
+}
+
+const element = <Timer />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We use the `useState` hook to add state to the `Timer` component with an initial count of 0.
+2. We use the `useEffect` hook to start an interval that increments the count every second. We pass an empty array as the second argument to ensure that the effect is run only once.
+3. We return a cleanup function from the `useEffect` hook to stop the interval when the component is unmounted.
+
+### createContext + useContext
+
+-   The `createContext` method allows you to create a new context for sharing data with nested components.
+-   The `useContext` hook allows you to access the value of a context created using the `createContext` method. This hook is used inside functional components. Here's an example of using the `createContext` and `useContext` methods:
+
+```jsx
+import Gachi, { useContext } from "/src/core/framework.ts"
+
+function App() {
+	const ThemeContext = Gachi.createContext("theme", "light")
+
+	return <ThemedButton />
+}
+
+function ThemedButton() {
+	const theme = useContext("theme")
+
+	return (
+		<button style={{ background: theme === "light" ? "#fff" : "#000" }}>
+			Themed Button
+		</button>
+	)
+}
+
+const element = <App />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We create a new context named `ThemeContext` using the `createContext` method. The initial value of the context is set to `"light"`.
+2. In the `ThemedButton` component, we use the `useContext` method to access the current value of the `ThemeContext`.
+
+### useNavigate
+
+The `useNavigate` hook allows you to navigate to a new URL programmatically. This is useful for building single-page applications (SPAs) without full-page reloads. Here's an example of using the `useNavigate` hook:
+
+```jsx
+import Gachi, { useNavigate } from "/src/core/framework.ts"
+
+function Home() {
+	const navigate = useNavigate()
+
+	function handleButtonClick() {
+		navigate("/about")
+	}
+
+	return (
+		<div>
+			<h1>Welcome to the Home page!</h1>
+			<button onClick={handleButtonClick}>Go to About</button>
+		</div>
+	)
+}
+
+function About() {
+	return <h1>About Page</h1>
+}
+
+function App() {
+	return (
+		<div>
+			<Home />
+			<About />
+		</div>
+	)
+}
+
+const element = <App />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We use the `useNavigate` hook from Gachi to obtain the `navigate` function.
+2. When the "Go to About" button is clicked, the `handleButtonClick` function is called, and it uses the `navigate` function to change the URL to "/about".
+3. The `App` component renders both the `Home` and `About` components, and we can switch between them by clicking the button.
