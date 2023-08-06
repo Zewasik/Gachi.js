@@ -160,23 +160,30 @@ Explanation:
 
 ### useEffect
 
-The `useEffect` hook allows you to perform side effects in functional components, such as data fetching, subscriptions, or manually interacting with the DOM. Here's an example of using the `useEffect` hook:
+The `useEffect` hook allows you to perform side effects in functional components, such as data fetching, subscriptions, or manually interacting with the DOM.
+
+Inside the callback function you can also return a cleanup function. It will be called first after every re-render.
+
+`useEffect` can be used in 3 different ways:
+
+-   with a non-empty dependency array:
+    -   `useEffect` is triggered when any entry in the dependency array is changed.
+-   with an empty dependency array:
+    -   `useEffect` is triggered only once after initial component render.
+-   without dependencies:
+    -   `useEffect` is triggered each time the component is re-rendered.
+
+Here's an example of using the `useEffect` hook with a non-empty dependency array:
 
 ```jsx
 import Gachi, { useState, useEffect } from "/src/core/framework.ts"
 
-function Timer() {
+function App() {
 	const [count, setCount] = useState(0)
 
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			setCount((prevCount) => prevCount + 1)
-		}, 1000)
-
-		return () => {
-			clearInterval(intervalId)
-		}
-	}, [])
+		if (count > 10) setCount(0)
+	}, [count])
 
 	return (
 		<div>
@@ -185,21 +192,21 @@ function Timer() {
 	)
 }
 
-const element = <Timer />
+const element = <App />
 
 Gachi.render(element, document.getElementById("root"))
 ```
 
 Explanation:
 
-1. We use the `useState` hook to add state to the `Timer` component with an initial count of 0.
-2. We use the `useEffect` hook to start an interval that increments the count every second. We pass an empty array as the second argument to ensure that the effect is run only once.
-3. We return a cleanup function from the `useEffect` hook to stop the interval when the component is unmounted.
+1. We use the `useState` hook to create a `counter` component with an initial count of 0.
+2. We use the `useEffect` hook to restart the `counter` when it reaches 11.
 
 ### createContext + useContext
 
--   The `createContext` method allows you to create a new context for sharing data with nested components.
--   The `useContext` hook allows you to access the value of a context created using the `createContext` method. This hook is used inside functional components. Here's an example of using the `createContext` and `useContext` methods:
+The `createContext` method allows you to create a new context for sharing data with nested components.
+
+The `useContext` hook allows you to access the value of a context created using the `createContext` method. This hook is used inside functional components. Here's an example of using the `createContext` and `useContext` methods:
 
 ```jsx
 import Gachi, { useContext } from "/src/core/framework.ts"
