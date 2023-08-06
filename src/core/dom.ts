@@ -29,8 +29,9 @@ function updateNode(element: FiberElement | undefined) {
 	if (element.effectTag === "DELETE") {
 		deleteNode(element, parentDom)
 	}
-
-	updateNode(element.child)
+	if (element.effectTag !== "DELETE") {
+		updateNode(element.child)
+	}
 	updateNode(element.sibling)
 }
 

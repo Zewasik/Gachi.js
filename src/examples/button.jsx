@@ -1,8 +1,8 @@
 import Gachi, { useContext, useState } from "../core/framework"
 
 export default function Button({ value = "default" }) {
-	// const [c, setC] = useState(0)
-	const { c, setC } = useContext("count")
+	const [c, setC] = useState(0)
+	// const { c, setC } = useContext("count")
 
 	return (
 		<div>
@@ -12,7 +12,7 @@ export default function Button({ value = "default" }) {
 			<button onClick={() => setC(0)} className="main-button">
 				Reset
 			</button>
-			{/* {c > 5 ? <Button /> : null} */}
+			{c > 5 ? <Button /> : null}
 		</div>
 	)
 }
