@@ -10,7 +10,7 @@ interface FiberElement extends GachiElement {
 	child?: FiberElement
 	alternate?: FiberElement
 	effectTag?: string
-	hooks?: any[]
+	hooks?: Array<Hook>
 }
 
 interface BaseProps {
@@ -21,4 +21,10 @@ interface BaseProps {
 
 interface ElementProps extends BaseProps {
 	children: Array<GachiElement>
+}
+
+interface Hook {
+	hookName: string
+	value: any
+	callbackResult?: () => void
 }

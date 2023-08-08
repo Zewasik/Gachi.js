@@ -123,13 +123,17 @@ Explanation:
 
 ## Hooks
 
-Gachi.js provides hooks to manage state and side effects within functional components. The `useState` hook allows you to add state to a functional component. Here's an example of using the `useState` hook:
+Gachi.js provides hooks to manage state and side effects within functional components. In Gachi.js, hooks are implemented using the `Hooks` class, which extends the `VirtualDom` class for handling virtual DOM updates.
+
+### useState
+
+The `useState` hook allows you to add state to a functional component. Here's an example of using the `useState` hook:
 
 ```jsx
-import Gachi from "/src/core/framework.ts"
+import Gachi, { useState } from "/src/core/framework.ts"
 
 function Counter() {
-	const [count, setCount] = Gachi.useState(0)
+	const [count, setCount] = useState(0)
 
 	function handleIncrement() {
 		setCount(count + 1)
@@ -153,3 +157,85 @@ Explanation:
 1. We use the `useState` hook from Gachi to add state to the `Counter` component. The `count` state variable and the `setCount` function to update it are obtained from the `useState` hook.
 2. When the "Increment" button is clicked, the `handleIncrement` function is called, updating the `count` state.
 3. The updated `count` is displayed in the component, and clicking the button increments its value.
+
+### useEffect
+
+The `useEffect` hook allows you to perform side effects in functional components, such as data fetching, subscriptions, or manually interacting with the DOM.
+
+Inside the callback function you can also return a cleanup function. It will be called first after every re-render.
+
+`useEffect` can be used in 3 different ways:
+
+-   with a non-empty dependency array:
+    -   `useEffect` is triggered when any entry in the dependency array is changed.
+-   with an empty dependency array:
+    -   `useEffect` is triggered only once after initial component render.
+-   without dependencies:
+    -   `useEffect` is triggered each time the component is re-rendered.
+
+Here's an example of using the `useEffect` hook with a non-empty dependency array:
+
+```jsx
+import Gachi, { useState, useEffect } from "/src/core/framework.ts"
+
+function App() {
+	const [count, setCount] = useState(0)
+	const incrementHandler = () => setCount(count + 1)
+
+	useEffect(() => {
+		if (count > 10) setCount(0)
+	}, [count])
+
+	return (
+		<div>
+			<p>Count: {count}</p>
+			<button onClick={incrementHandler}>Increment</button>
+		</div>
+	)
+}
+
+const element = <App />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We use the `useState` hook to create a `count` component with an initial count of 0.
+2. We use a button with `incrementHandler` to increment the `count` by 1.
+3. We use the `useEffect` hook to restart the `count` when it reaches 11.
+
+### createContext + useContext
+
+The `createContext` method allows you to create a new context for sharing data with nested components.
+
+The `useContext` hook allows you to access the value of a context created using the `createContext` method. This hook is used inside functional components. Here's an example of using the `createContext` and `useContext` methods:
+
+```jsx
+import Gachi, { useContext } from "/src/core/framework.ts"
+
+function App() {
+	const ThemeContext = Gachi.createContext("theme", "light")
+
+	return <ThemedButton />
+}
+
+function ThemedButton() {
+	const theme = useContext("theme")
+
+	return (
+		<button style={{ background: theme === "light" ? "#fff" : "#000" }}>
+			Themed Button
+		</button>
+	)
+}
+
+const element = <App />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We create a new context named `ThemeContext` using the `createContext` method. The initial value of the context is set to `"light"`.
+2. In the `ThemedButton` component, we use the `useContext` method to access the current value of the `ThemeContext`.
