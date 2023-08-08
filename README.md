@@ -180,6 +180,7 @@ import Gachi, { useState, useEffect } from "/src/core/framework.ts"
 
 function App() {
 	const [count, setCount] = useState(0)
+	const incrementHandler = () => setCount(count + 1)
 
 	useEffect(() => {
 		if (count > 10) setCount(0)
@@ -188,6 +189,7 @@ function App() {
 	return (
 		<div>
 			<p>Count: {count}</p>
+			<button onClick={incrementHandler}>Increment</button>
 		</div>
 	)
 }
@@ -199,8 +201,9 @@ Gachi.render(element, document.getElementById("root"))
 
 Explanation:
 
-1. We use the `useState` hook to create a `counter` component with an initial count of 0.
-2. We use the `useEffect` hook to restart the `counter` when it reaches 11.
+1. We use the `useState` hook to create a `count` component with an initial count of 0.
+2. We use a button with `incrementHandler` to increment the `count` by 1.
+3. We use the `useEffect` hook to restart the `count` when it reaches 11.
 
 ### createContext + useContext
 
@@ -236,49 +239,3 @@ Explanation:
 
 1. We create a new context named `ThemeContext` using the `createContext` method. The initial value of the context is set to `"light"`.
 2. In the `ThemedButton` component, we use the `useContext` method to access the current value of the `ThemeContext`.
-
-### useNavigate
-
-The `useNavigate` hook allows you to navigate to a new URL programmatically. This is useful for building single-page applications (SPAs) without full-page reloads. Here's an example of using the `useNavigate` hook:
-
-```jsx
-import Gachi, { useNavigate } from "/src/core/framework.ts"
-
-function Home() {
-	const navigate = useNavigate()
-
-	function handleButtonClick() {
-		navigate("/about")
-	}
-
-	return (
-		<div>
-			<h1>Welcome to the Home page!</h1>
-			<button onClick={handleButtonClick}>Go to About</button>
-		</div>
-	)
-}
-
-function About() {
-	return <h1>About Page</h1>
-}
-
-function App() {
-	return (
-		<div>
-			<Home />
-			<About />
-		</div>
-	)
-}
-
-const element = <App />
-
-Gachi.render(element, document.getElementById("root"))
-```
-
-Explanation:
-
-1. We use the `useNavigate` hook from Gachi to obtain the `navigate` function.
-2. When the "Go to About" button is clicked, the `handleButtonClick` function is called, and it uses the `navigate` function to change the URL to "/about".
-3. The `App` component renders both the `Home` and `About` components, and we can switch between them by clicking the button.

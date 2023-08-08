@@ -4,20 +4,28 @@ import hooksInst from "./hooks"
 export class VirtualDom {
 	currentRoot: FiberElement | null = null
 	deletitionList: FiberElement[] = []
+	renderQueue: FiberElement[] = []
 
-	workLoop(element: FiberElement) {
+	workLoop(element: FiberElement, recursiveCall?: boolean) {
+		if (!recursiveCall) this.renderQueue.push(element)
+		if (this.renderQueue.length > 1) return
+
 		let domParentFiber: FiberElement | null = element
 
 		while (domParentFiber) {
 			domParentFiber = this.setUpFiberTree(domParentFiber)
 		}
 
-		if (element) {
-			updateRealDom(element, this.deletitionList)
-		}
+		updateRealDom(element, this.deletitionList)
 
 		this.deletitionList = []
 		this.currentRoot = element
+
+		this.renderQueue.shift()
+		if (this.renderQueue.length > 0) {
+			this.renderQueue[0].alternate = this.currentRoot
+			this.workLoop(this.renderQueue[0], true)
+		}
 	}
 
 	private setUpFiberTree(pointElement: FiberElement): FiberElement | null {

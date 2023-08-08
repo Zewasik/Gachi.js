@@ -2,6 +2,7 @@ import { VirtualDom } from "./virtualDom"
 
 export class Hooks extends VirtualDom {
 	private _currentComponent: FiberElement | null
+	private _callHistory: FiberElement[]
 	private _currentHook: number
 	private _currentContext: Map<string, any> = new Map<string, any>()
 
@@ -9,26 +10,27 @@ export class Hooks extends VirtualDom {
 		super()
 		this._currentComponent = null
 		this._currentHook = 0
+		this._callHistory = []
 	}
 
 	useState<T>(initialState: T): [T, (newState: T) => void] {
-		if (!this._currentComponent) {
+		if (!this.currentComponent) {
 			throw new Error("no component")
 		}
 
 		const hookIndex = this._currentHook
-		let hooks: Hook[] = this._currentComponent.hooks
-			? this._currentComponent.hooks
+		let hooks: Hook[] = this.currentComponent.hooks
+			? this.currentComponent.hooks
 			: []
 
 		if (
-			this._currentComponent.alternate &&
-			this._currentComponent.alternate.hooks
+			this.currentComponent.alternate &&
+			this.currentComponent.alternate.hooks
 		) {
-			hooks = this._currentComponent.alternate.hooks
-			if (this._currentComponent.alternate.hooks[hookIndex]) {
+			hooks = this.currentComponent.alternate.hooks
+			if (this.currentComponent.alternate.hooks[hookIndex]) {
 				initialState =
-					this._currentComponent.alternate.hooks[hookIndex].value
+					this.currentComponent.alternate.hooks[hookIndex].value
 			}
 		}
 
@@ -55,10 +57,10 @@ export class Hooks extends VirtualDom {
 			this.triggerRender()
 		}
 
-		this._currentComponent.hooks = hooks
+		this.currentComponent.hooks = hooks
 		this._currentHook++
 
-		return [this._currentComponent.hooks[hookIndex].value, setState]
+		return [this.currentComponent.hooks[hookIndex].value, setState]
 	}
 
 	createContext<T>(name: string, initialState: T) {
@@ -105,20 +107,20 @@ export class Hooks extends VirtualDom {
 		callback: () => () => void,
 		dependancies: Array<any> | null = null
 	) {
-		if (!this._currentComponent) {
+		if (!this.currentComponent) {
 			throw new Error("no component")
 		}
 
 		const hookIndex = this._currentHook
-		let hooks: Hook[] = this._currentComponent.hooks
-			? this._currentComponent.hooks
+		let hooks: Hook[] = this.currentComponent.hooks
+			? this.currentComponent.hooks
 			: []
 
 		if (
-			this._currentComponent.alternate &&
-			this._currentComponent.alternate.hooks
+			this.currentComponent.alternate &&
+			this.currentComponent.alternate.hooks
 		) {
-			hooks = this._currentComponent.alternate.hooks
+			hooks = this.currentComponent.alternate.hooks
 		}
 
 		if (hooks[hookIndex] === undefined) {
@@ -144,7 +146,7 @@ export class Hooks extends VirtualDom {
 			}
 		}
 
-		this._currentComponent.hooks = hooks
+		this.currentComponent.hooks = hooks
 		this._currentHook++
 	}
 
@@ -167,6 +169,11 @@ export class Hooks extends VirtualDom {
 	set currentComponent(c: FiberElement | null) {
 		this._currentComponent = c
 		this._currentHook = 0
+		c ? this._callHistory.push(c) : this._callHistory.pop()
+	}
+
+	get currentComponent(): FiberElement {
+		return this._callHistory[this._callHistory.length - 1]
 	}
 }
 
