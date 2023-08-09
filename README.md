@@ -239,3 +239,50 @@ Explanation:
 
 1. We create a new context named `ThemeContext` using the `createContext` method. The initial value of the context is set to `"light"`.
 2. In the `ThemedButton` component, we use the `useContext` method to access the current value of the `ThemeContext`.
+
+### useNavigate
+
+The `useNavigate` hook allows you to navigate to a new URL programmatically. This is useful for building single-page applications (SPAs) without full-page reloads. Here's an example of using the `useNavigate` hook:
+
+```jsx
+import Gachi, { useNavigate } from "/src/core/framework.ts"
+import { Router, Route } from "/src/components/router.ts"
+
+function Home() {
+	const navigate = useNavigate()
+
+	function handleButtonClick() {
+		navigate("/about")
+	}
+
+	return (
+		<div>
+			<h1>Welcome to the Home page!</h1>
+			<button onClick={handleButtonClick}>Go to About</button>
+		</div>
+	)
+}
+
+function About() {
+	return <h1>About Page</h1>
+}
+
+function App() {
+	return (
+		<Router>
+			<Route path="/" element={<Home />} />
+			<Route path="/about" element={<About />} />
+		</Router>
+	)
+}
+
+const element = <App />
+
+Gachi.render(element, document.getElementById("root"))
+```
+
+Explanation:
+
+1. We use the `useNavigate` hook from Gachi to obtain the `navigate` function.
+2. When the "Go to About" button is clicked, the `handleButtonClick` function is called, and it uses the `navigate` function to change the URL to "/about".
+3. The `App` component renders both the `Home` and `About` components, and we can switch between them by clicking the button.
