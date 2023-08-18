@@ -28,10 +28,10 @@ function updateNode(element: FiberElement | undefined) {
 	}
 	if (element.effectTag === "DELETE") {
 		deleteNode(element, parentDom)
+		return
 	}
-	if (element.effectTag !== "DELETE") {
-		updateNode(element.child)
-	}
+
+	updateNode(element.child)
 	updateNode(element.sibling)
 }
 

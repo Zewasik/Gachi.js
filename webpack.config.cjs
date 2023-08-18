@@ -6,6 +6,7 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, "dist"), // Output directory path
 		filename: "bundle.js", // Output bundle file name
+		publicPath: "/",
 	},
 	module: {
 		rules: [
