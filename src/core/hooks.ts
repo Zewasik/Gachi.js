@@ -11,6 +11,7 @@ export class Hooks extends VirtualDom {
 		this._currentComponent = null
 		this._currentHook = 0
 		this._callHistory = []
+		window.addEventListener("popstate", () => this.triggerRender())
 	}
 
 	useState<T>(initialState: T): [T, (newState: T) => void] {
@@ -50,7 +51,6 @@ export class Hooks extends VirtualDom {
 					: { hookName: "STATE", value: newState }
 
 			if (prevValue === hooks[hookIndex].value) {
-				console.log("same value")
 				return
 			}
 
@@ -156,13 +156,16 @@ export class Hooks extends VirtualDom {
 
 	private triggerRender() {
 		if (this.currentRoot) {
-			this.clearContext()
-			this.workLoop({
-				props: { children: this.currentRoot.props.children },
-				type: "ROOT",
-				dom: this.currentRoot.dom,
-				alternate: this.currentRoot,
-			})
+			this.workLoop(
+				{
+					props: { children: this.currentRoot.props.children },
+					type: "ROOT",
+					dom: this.currentRoot.dom,
+					alternate: this.currentRoot,
+				},
+				false,
+				this.clearContext.bind(this)
+			)
 		}
 	}
 

@@ -5,21 +5,27 @@ export class VirtualDom {
 	currentRoot: FiberElement | null = null
 	deletitionList: FiberElement[] = []
 	renderQueue: FiberElement[] = []
+	clearContextCopy?: Function
 
-	workLoop(element: FiberElement, recursiveCall?: boolean) {
+	workLoop(
+		element: FiberElement,
+		recursiveCall?: boolean,
+		clearContext?: Function
+	) {
+		if (!this.clearContextCopy) this.clearContextCopy = clearContext
 		if (!recursiveCall) this.renderQueue.push(element)
-		if (this.renderQueue.length > 1) return
+		if (!recursiveCall && this.renderQueue.length > 1) return
 
 		let domParentFiber: FiberElement | null = element
+		this.currentRoot = element
 
+		if (this.clearContextCopy) this.clearContextCopy()
 		while (domParentFiber) {
 			domParentFiber = this.setUpFiberTree(domParentFiber)
 		}
-
 		updateRealDom(element, this.deletitionList)
 
 		this.deletitionList = []
-		this.currentRoot = element
 
 		this.renderQueue.shift()
 		if (this.renderQueue.length > 0) {
@@ -89,7 +95,8 @@ export class VirtualDom {
 					parent: element,
 					effectTag: "COMMIT",
 				}
-			} else if (alternateChild) {
+			}
+			if (!sameType && alternateChild) {
 				alternateChild.effectTag = "DELETE"
 				this.deletitionList.push(alternateChild)
 				// TODO: fix deletition -> remove doesn't work properly for functional component
