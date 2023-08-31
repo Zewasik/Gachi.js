@@ -41,7 +41,22 @@ function deleteNode(element: FiberElement, parentDom: HTMLElement | Text) {
 	if (element.dom) {
 		parentDom.removeChild(element.dom)
 	} else if (element.child) {
-		deleteNode(element.child, parentDom)
+		deleteFunctionalComponent(element.child, parentDom)
+	}
+}
+
+function deleteFunctionalComponent(
+	element: FiberElement,
+	parentDom: HTMLElement | Text
+) {
+	if (!element) return
+
+	if (element.dom) {
+		parentDom.removeChild(element.dom)
+		if (element.sibling)
+			deleteFunctionalComponent(element.sibling, parentDom)
+	} else if (element.child) {
+		deleteFunctionalComponent(element.child, parentDom)
 	}
 }
 

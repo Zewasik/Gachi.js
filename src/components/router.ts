@@ -1,5 +1,4 @@
 /// <reference types="../core/globals.d.ts" />
-import { useContext } from "../core/framework"
 
 interface RouterParam {
 	routes: { path: string; element: GachiElement }[]

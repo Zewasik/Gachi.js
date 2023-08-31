@@ -16,7 +16,15 @@ module.exports = {
 				use: {
 					loader: "babel-loader", // Use Babel to transpile JavaScript
 					options: {
-						presets: ["@babel/preset-typescript"],
+						presets: [
+							[
+								"@babel/preset-typescript",
+								{
+									jsxPragma: "Gachi.createElement",
+									jsxPragmaFrag: "Gachi.Fragment",
+								},
+							],
+						],
 						plugins: [
 							[
 								"@babel/plugin-transform-react-jsx",
